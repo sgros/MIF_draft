@@ -195,8 +195,45 @@
     <section title="Server component">
 
       <t>
-      Write about changes in the radvd component.
+      Server side component of the MIF architecture implementation described in
+      this document is Router Advertisements Daemon (radvd). radvd is used to
+      announce PvD configuration data to the clients using NDP protocol. This
+      alows clients to autoconfigure their network parameters related to different PvDs.
+      For the purpose of MIF architecture implementation, existing structure of
+      Router Advertisements (RA) message is extended with new NDP option that
+      encapsulates PvD-related network configuration information as suboptions.
+      To configure what PvD-related network configuration information to include
+      into RA messages, radvd configuration file is extended with new configuration
+      block where PvD-related network configuration information are specified.
       </t>
+
+      <t>
+      Proposed extension of the Router Advertisement Daemon is backward compatible
+      with the non-PvD-aware version of radvd. This means that old clients will
+      continue to work normally, except that they will not be able to configure
+      PvD-related network information on their network interfaces. New option
+      introduced into the RA messages is silently ignored by non-PvD-aware
+      clients if they are implemented correctly.
+      </t>
+
+      <section title="Router Advertisements (RA) message extension">
+        <t>
+        PvD-aware version of radvd supports the inclusion of network parameters
+        that belong to explicitly identified provisioning domains into the
+        Router Advertisements (RA) messages. Explicitly identified provisioning
+        domain is a set of consistent network configuration parameters
+        identified by unique provisioning domain identifier (PvD ID).
+        
+        To carry PvD-related network configuration information, the structure of
+        the Router Advertisements (RA) message is extended with new NDP option
+        called Provisioning Domains Container Option (PVD_CO). The structure of
+        the PVD_CO option is defined in [....]. PVD_CO is a container option which
+        means it encapsulates other NDP options. The following NDP options
+        </t>
+      </section>
+
+      <section title="Configuration file (radvd.conf) extension">
+      </section>
 
     </section>
 

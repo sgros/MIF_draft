@@ -65,16 +65,19 @@ Table of Contents
    2.  pvd_man implementation  . . . . . . . . . . . . . . . . . . .   2
      2.1.  Architecture  . . . . . . . . . . . . . . . . . . . . . .   2
      2.2.  Implementation details  . . . . . . . . . . . . . . . . .   2
-     2.3.  Experiences gained  . . . . . . . . . . . . . . . . . . .   2
+     2.3.  Test scenarios used . . . . . . . . . . . . . . . . . . .   2
+     2.4.  Experiences gained  . . . . . . . . . . . . . . . . . . .   3
    3.  NetworkManager implementation . . . . . . . . . . . . . . . .   3
    4.  Server component  . . . . . . . . . . . . . . . . . . . . . .   3
-   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   3
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   3
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   3
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   3
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   3
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   4
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   4
+     4.1.  Router Advertisements (RA) message extension  . . . . . .   3
+     4.2.  Configuration file (radvd.conf) extension . . . . . . . .   4
+   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   4
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   5
 
 1.  Introduction
 
@@ -97,12 +100,9 @@ Table of Contents
 
    Present some key implementation details.
 
-2.3.  Experiences gained
+2.3.  Test scenarios used
 
-   Present some experience gained from the implementation.  What do you
-   think was good?  What would you do differently if you were to
-   implement this again.  What about language/environment, was it good,
-   what was bad?
+   Describe test scenarios used.
 
 
 
@@ -114,13 +114,63 @@ Gros, et al.              Expires May 26, 2016                  [Page 2]
 Internet-Draft          Configuring PvD using NDP          November 2015
 
 
+2.4.  Experiences gained
+
+   Present some experience gained from the implementation.  What do you
+   think was good?  What would you do differently if you were to
+   implement this again.  What about language/environment, was it good,
+   what was bad?
+
 3.  NetworkManager implementation
 
    TBD.
 
 4.  Server component
 
-   Write about changes in the radvd component.
+   Server side component of the MIF architecture implementation
+   described in this document is Router Advertisements Daemon (radvd).
+   radvd is used to announce PvD configuration data to the clients using
+   NDP protocol.  This alows clients to autoconfigure their network
+   parameters related to different PvDs.  For the purpose of MIF
+   architecture implementation, existing structure of Router
+   Advertisements (RA) message is extended with new NDP option that
+   encapsulates PvD-related network configuration information as
+   suboptions.  To configure what PvD-related network configuration
+   information to include into RA messages, radvd configuration file is
+   extended with new configuration block where PvD-related network
+   configuration information are specified.
+
+   Proposed extension of the Router Advertisement Daemon is backward
+   compatible with the non-PvD-aware version of radvd.  This means that
+   old clients will continue to work normally, except that they will not
+   be able to configure PvD-related network information on their network
+   interfaces.  New option introduced into the RA messages is silently
+   ignored by non-PvD-aware clients if they are implemented correctly.
+
+4.1.  Router Advertisements (RA) message extension
+
+   PvD-aware version of radvd supports the inclusion of network
+   parameters that belong to explicitly identified provisioning domains
+   into the Router Advertisements (RA) messages.  Explicitly identified
+   provisioning domain is a set of consistent network configuration
+   parameters identified by unique provisioning domain identifier (PvD
+   ID).  To carry PvD-related network configuration information, the
+   structure of the Router Advertisements (RA) message is extended with
+   new NDP option called Provisioning Domains Container Option (PVD_CO).
+   The structure of the PVD_CO option is defined in [....].  PVD_CO is a
+   container option which means it encapsulates other NDP options.  The
+   following NDP options
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 3]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+4.2.  Configuration file (radvd.conf) extension
 
 5.  Acknowledgements
 
@@ -160,19 +210,21 @@ Internet-Draft          Configuring PvD using NDP          November 2015
               Multiple-Interface Hosts", RFC 6419, DOI 10.17487/RFC6419,
               November 2011, <http://www.rfc-editor.org/info/rfc6419>.
 
-
-
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 3]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
    [RFC7556]  Anipko, D., Ed., "Multiple Provisioning Domain
               Architecture", RFC 7556, DOI 10.17487/RFC7556, June 2015,
               <http://www.rfc-editor.org/info/rfc7556>.
+
+
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 4]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
 
 8.2.  Informative References
 
@@ -213,19 +265,6 @@ Authors' Addresses
    Email: stjepan.gros@fer.hr
 
 
-
-
-
-
-
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 4]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
    Leonardo Jelenkovic
    University of Zagreb
    Unska 3
@@ -233,6 +272,14 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    HR
 
    Email: leonardo.jelenkovic@fer.hr
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 5]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
 
 
    Dejan Skvorc
@@ -277,4 +324,13 @@ Internet-Draft          Configuring PvD using NDP          November 2015
 
 
 
-Gros, et al.              Expires May 26, 2016                  [Page 5]
+
+
+
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 6]
