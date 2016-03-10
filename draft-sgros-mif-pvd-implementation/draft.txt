@@ -70,14 +70,14 @@ Table of Contents
    3.  NetworkManager implementation . . . . . . . . . . . . . . . .   3
    4.  Server component  . . . . . . . . . . . . . . . . . . . . . .   3
      4.1.  Router Advertisements (RA) message extension  . . . . . .   3
-     4.2.  Configuration file (radvd.conf) extension . . . . . . . .   4
-   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   4
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   5
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   5
+     4.2.  Configuration file (radvd.conf) extension . . . . . . . .   6
+   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   6
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -130,15 +130,16 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    Server side component of the MIF architecture implementation
    described in this document is Router Advertisements Daemon (radvd).
    radvd is used to announce PvD configuration data to the clients using
-   NDP protocol.  This alows clients to autoconfigure their network
-   parameters related to different PvDs.  For the purpose of MIF
-   architecture implementation, existing structure of Router
-   Advertisements (RA) message is extended with new NDP option that
-   encapsulates PvD-related network configuration information as
-   suboptions.  To configure what PvD-related network configuration
-   information to include into RA messages, radvd configuration file is
-   extended with new configuration block where PvD-related network
-   configuration information are specified.
+   NDP protocol.  PvD-aware radvd extension alows clients to
+   autoconfigure their network parameters related to multiple PvDs
+   simultaneously.  For the purpose of MIF architecture implementation,
+   existing structure of Router Advertisements (RA) message is extended
+   with new NDP option that encapsulates PvD-related network
+   configuration information as suboptions.  To configure what PvD-
+   related network configuration information to include into RA
+   messages, radvd configuration file is extended with new configuration
+   block where PvD-related network configuration information are
+   specified.
 
    Proposed extension of the Router Advertisement Daemon is backward
    compatible with the non-PvD-aware version of radvd.  This means that
@@ -154,13 +155,12 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    into the Router Advertisements (RA) messages.  Explicitly identified
    provisioning domain is a set of consistent network configuration
    parameters identified by unique provisioning domain identifier (PvD
-   ID).  To carry PvD-related network configuration information, the
-   structure of the Router Advertisements (RA) message is extended with
-   new NDP option called Provisioning Domains Container Option (PVD_CO).
-   The structure of the PVD_CO option is defined in [....].  PVD_CO is a
-   container option which means it encapsulates other NDP options.  The
-   following NDP options
+   ID).
 
+   To carry PvD-related network configuration information, the structure
+   of the RA message is extended with new NDP option called Provisioning
+   Domains Container option (PVD_CO).  PVD_CO is a container option,
+   which means it encapsulates other NDP options.  In this
 
 
 
@@ -169,6 +169,120 @@ Gros, et al.              Expires May 26, 2016                  [Page 3]
 
 Internet-Draft          Configuring PvD using NDP          November 2015
 
+
+   implementation, the following options are allowed within the PVD_CO
+   option:
+
+   o  Provisioning Domain Identifier option (PVD_ID)
+
+   o  MTU option
+
+   o  Prefix Information option
+
+   o  Route Information option
+
+   o  RDNSS option
+
+   o  DNSSL option
+
+   PVD_ID is new option introduced to identify the PvD, while others are
+   standard NDP options used in regular non-PvD-aware RA messages.
+   PVD_ID is mandatory option and MUST be present exactly once per
+   PVD_CO option.  The structure of the PVD_ID option is taken from the
+   [....].  Figure 1 shows the structure of the PVD_ID option used in
+   proposed MIF architecture implementation.
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |    id-type    |   id-length   |                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+   |                                                               |
+   |                                                               |
+   |                    PVD identity information                   |
+   |                       (UUID, 36 octets)                       |
+   |                                                               |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               |      Padding with zeros       |
+   +---------------------------------------------------------------+
+
+                          Figure 1: PVD_ID option
+
+   Values of the PVD_ID fields are as follows:
+
+   o  id-type: 4
+
+   o  id-length: 36
+
+   o  PVD identity information
+
+   Other options MAY appear zero or more times within a PVD_CO options.
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 4]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+   So, putting it all together, we have, e.g.,
+
+     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |      134      |       0       |          Checksum             |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    | Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Reachable Time                        |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                          Retrans Timer                        |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
+    |  Type=PVD_CO  |       8       |      0        | 0 |     0     ~  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    ~         |        18           | PVD_ID consuming 18 octets    |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |       3       |       4       |      64       |1|1| Reserved1 |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Valid Lifetime                        |  P
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  V
+    |                       Preferred Lifetime                      |  D
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                           Reserved2                           |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |                      2001:db8:abad:cafe::                     ~  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |        5      |       1       |           Reserved            |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |                            1337                               |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
+    |       3       |       4       | Prefix Length |1|1| Reserved1 |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Valid Lifetime                        |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                       Preferred Lifetime                      |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                           Reserved2                           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                      2001:db8:cafe:babe::                     ~
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |        5      |      1        |           Reserved            |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                            1500                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   which is a very simple example.
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 5]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+                     Figure 2: PvD-aware version of RA
 
 4.2.  Configuration file (radvd.conf) extension
 
@@ -219,9 +333,7 @@ Internet-Draft          Configuring PvD using NDP          November 2015
 
 
 
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 4]
+Gros, et al.              Expires May 26, 2016                  [Page 6]
 
 Internet-Draft          Configuring PvD using NDP          November 2015
 
@@ -277,7 +389,7 @@ Authors' Addresses
 
 
 
-Gros, et al.              Expires May 26, 2016                  [Page 5]
+Gros, et al.              Expires May 26, 2016                  [Page 7]
 
 Internet-Draft          Configuring PvD using NDP          November 2015
 
@@ -333,4 +445,4 @@ Internet-Draft          Configuring PvD using NDP          November 2015
 
 
 
-Gros, et al.              Expires May 26, 2016                  [Page 6]
+Gros, et al.              Expires May 26, 2016                  [Page 8]

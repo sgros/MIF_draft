@@ -195,41 +195,115 @@
     <section title="Server component">
 
       <t>
-      Server side component of the MIF architecture implementation described in
-      this document is Router Advertisements Daemon (radvd). radvd is used to
-      announce PvD configuration data to the clients using NDP protocol. This
-      alows clients to autoconfigure their network parameters related to different PvDs.
-      For the purpose of MIF architecture implementation, existing structure of
-      Router Advertisements (RA) message is extended with new NDP option that
-      encapsulates PvD-related network configuration information as suboptions.
-      To configure what PvD-related network configuration information to include
-      into RA messages, radvd configuration file is extended with new configuration
-      block where PvD-related network configuration information are specified.
+      Server side component of the MIF architecture implementation described in this document is Router Advertisements Daemon (radvd). radvd is used to announce PvD configuration data to the clients using NDP protocol. PvD-aware radvd extension alows clients to autoconfigure their network parameters related to multiple PvDs simultaneously. For the purpose of MIF architecture implementation, existing structure of Router Advertisements (RA) message is extended with new NDP option that encapsulates PvD-related network configuration information as suboptions. To configure what PvD-related network configuration information to include into RA messages, radvd configuration file is extended with new configuration block where PvD-related network configuration information are specified.
       </t>
 
       <t>
-      Proposed extension of the Router Advertisement Daemon is backward compatible
-      with the non-PvD-aware version of radvd. This means that old clients will
-      continue to work normally, except that they will not be able to configure
-      PvD-related network information on their network interfaces. New option
-      introduced into the RA messages is silently ignored by non-PvD-aware
-      clients if they are implemented correctly.
+      Proposed extension of the Router Advertisement Daemon is backward compatible with the non-PvD-aware version of radvd. This means that old clients will continue to work normally, except that they will not be able to configure PvD-related network information on their network interfaces. New option introduced into the RA messages is silently ignored by non-PvD-aware clients if they are implemented correctly.
       </t>
 
       <section title="Router Advertisements (RA) message extension">
         <t>
-        PvD-aware version of radvd supports the inclusion of network parameters
-        that belong to explicitly identified provisioning domains into the
-        Router Advertisements (RA) messages. Explicitly identified provisioning
-        domain is a set of consistent network configuration parameters
-        identified by unique provisioning domain identifier (PvD ID).
-        
-        To carry PvD-related network configuration information, the structure of
-        the Router Advertisements (RA) message is extended with new NDP option
-        called Provisioning Domains Container Option (PVD_CO). The structure of
-        the PVD_CO option is defined in [....]. PVD_CO is a container option which
-        means it encapsulates other NDP options. The following NDP options
+        PvD-aware version of radvd supports the inclusion of network parameters that belong to explicitly identified provisioning domains into the Router Advertisements (RA) messages. Explicitly identified provisioning domain is a set of consistent network configuration parameters identified by unique provisioning domain identifier (PvD ID).
         </t>
+        <t>
+        To carry PvD-related network configuration information, the structure of the RA message is extended with new NDP option called Provisioning Domains Container option (PVD_CO). PVD_CO is a container option, which means it encapsulates other NDP options. In this implementation, the following options are allowed within the PVD_CO option:
+          <list style="symbols">
+            <t>Provisioning Domain Identifier option (PVD_ID)</t>
+            <t>MTU option</t>
+            <t>Prefix Information option</t>
+            <t>Route Information option</t>
+            <t>RDNSS option</t>
+            <t>DNSSL option</t>
+          </list>
+        </t>
+        
+        <t>
+        PVD_ID is new option introduced to identify the PvD, while others are standard NDP options used in regular non-PvD-aware RA messages. PVD_ID is mandatory option and MUST be present exactly once per PVD_CO option. The structure of the PVD_ID option is taken from the [....]. <xref target="figure_pvdid_option" /> shows the structure of the PVD_ID option used in proposed MIF architecture implementation.
+        </t>
+        
+        <figure anchor="figure_pvdid_option" title="PVD_ID option">
+          <artwork>
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|    id-type    |   id-length   |                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+|                                                               |
+|                                                               |
+|                    PVD identity information                   |
+|                       (UUID, 36 octets)                       |
+|                                                               |
+|                                                               |
+|                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                               |      Padding with zeros       |
++---------------------------------------------------------------+
+          </artwork>
+        </figure>
+
+        <t>
+        Values of the PVD_ID fields are as follows:
+          <list style="symbols">
+            <t>id-type:   4</t>
+            <t>id-length: 36</t>
+            <t>PVD identity information</t>
+          </list>
+        </t>
+
+        <t>
+        Other options MAY appear zero or more times within a PVD_CO options.
+        </t>
+        
+        <figure anchor="figure_example" title="PvD-aware version of RA">
+          <preamble>So, putting it all together, we have, e.g.,</preamble>
+          <artwork>
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |      134      |       0       |          Checksum             |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                         Reachable Time                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                          Retrans Timer                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
+   |  Type=PVD_CO  |       8       |      0        | 0 |     0     ~  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+   ~         |        18           | PVD_ID consuming 18 octets    |  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+   |       3       |       4       |      64       |1|1| Reserved1 |  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                         Valid Lifetime                        |  P
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  V
+   |                       Preferred Lifetime                      |  D
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                           Reserved2                           |  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+   |                      2001:db8:abad:cafe::                     ~  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+   |        5      |       1       |           Reserved            |  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+   |                            1337                               |  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
+   |       3       |       4       | Prefix Length |1|1| Reserved1 |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                         Valid Lifetime                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                       Preferred Lifetime                      |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                           Reserved2                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      2001:db8:cafe:babe::                     ~
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        5      |      1        |           Reserved            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                            1500                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          </artwork>
+          <postamble>which is a very simple example.</postamble>
+        </figure>
+
       </section>
 
       <section title="Configuration file (radvd.conf) extension">
