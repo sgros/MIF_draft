@@ -70,14 +70,14 @@ Table of Contents
    3.  NetworkManager implementation . . . . . . . . . . . . . . . .   3
    4.  Server component  . . . . . . . . . . . . . . . . . . . . . .   3
      4.1.  Router Advertisements (RA) message extension  . . . . . .   3
-     4.2.  Configuration file (radvd.conf) extension . . . . . . . .   6
+     4.2.  Configuration file (radvd.conf) extension . . . . . . . .   5
    5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   6
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
      8.2.  Informative References  . . . . . . . . . . . . . . . . .   7
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
 
 1.  Introduction
 
@@ -145,7 +145,7 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    compatible with the non-PvD-aware version of radvd.  This means that
    old clients will continue to work normally, except that they will not
    be able to configure PvD-related network information on their network
-   interfaces.  New option introduced into the RA messages is silently
+   interfaces.  New option introduced into the RA message is silently
    ignored by non-PvD-aware clients if they are implemented correctly.
 
 4.1.  Router Advertisements (RA) message extension
@@ -159,9 +159,9 @@ Internet-Draft          Configuring PvD using NDP          November 2015
 
    To carry PvD-related network configuration information, the structure
    of the RA message is extended with new NDP option called Provisioning
-   Domains Container option (PVD_CO).  PVD_CO is a container option,
-   which means it encapsulates other NDP options.  In this
-
+   Domains Container option (PVD_CO), as described in [...].  PVD_CO is
+   a container option, which means it encapsulates other NDP options.
+   NDP options nested within the PVD_CO option describe particular PvD-
 
 
 
@@ -170,7 +170,40 @@ Gros, et al.              Expires May 26, 2016                  [Page 3]
 Internet-Draft          Configuring PvD using NDP          November 2015
 
 
-   implementation, the following options are allowed within the PVD_CO
+   related network configuration information.  All information the
+   belong to a single PvD which are part of a single network
+   autoconfiguration procedure are nested within the same PVD_CO option.
+   If a single RA message contains network configuration information
+   from multiple sources, multiple PVD_CO options are present in such
+   message.  Therefore, RA message MAY contain zero or more PVD_CO
+   options, one per PvD announced in RA message.  Figure 1 shows the
+   structure of the PVD_CO option used in proposed MIF architecture
+   implementation.
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |    Type=63    |    Length     |0|  Reserved=0 |  Name Type=0  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |            Padding to ensure 8 octets alignment=0             |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
+   ~                  Encapsulated NDP options                     ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                          Figure 1: PVD_CO option
+
+   In this experimental implementation, the type of the option is set to
+   63.  Option length is calculated depending on the length of the
+   encapsulated options.  The values of the S flag and Name Type field
+   are set to 0, which indicates that current implementation does not
+   use any security mechanism.  PVD_CO option header ends up with four
+   octets long padding filled with zeros.  The rest of the option
+   contains encapsulated NDP options that describe particular PvD-
+   related network parameters.
+
+   The following NDP options are allowed to appear within the PVD_CO
    option:
 
    o  Provisioning Domain Identifier option (PVD_ID)
@@ -185,39 +218,6 @@ Internet-Draft          Configuring PvD using NDP          November 2015
 
    o  DNSSL option
 
-   PVD_ID is new option introduced to identify the PvD, while others are
-   standard NDP options used in regular non-PvD-aware RA messages.
-   PVD_ID is mandatory option and MUST be present exactly once per
-   PVD_CO option.  The structure of the PVD_ID option is taken from the
-   [....].  Figure 1 shows the structure of the PVD_ID option used in
-   proposed MIF architecture implementation.
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |    id-type    |   id-length   |                               |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
-   |                                                               |
-   |                                                               |
-   |                    PVD identity information                   |
-   |                       (UUID, 36 octets)                       |
-   |                                                               |
-   |                                                               |
-   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                               |      Padding with zeros       |
-   +---------------------------------------------------------------+
-
-                          Figure 1: PVD_ID option
-
-   Values of the PVD_ID fields are as follows:
-
-   o  id-type: 4
-
-   o  id-length: 36
-
-   o  PVD identity information
-
-   Other options MAY appear zero or more times within a PVD_CO options.
 
 
 
@@ -226,54 +226,54 @@ Gros, et al.              Expires May 26, 2016                  [Page 4]
 Internet-Draft          Configuring PvD using NDP          November 2015
 
 
-   So, putting it all together, we have, e.g.,
+   PVD_ID is a new option introduced to uniquely identify the PvD, while
+   others are standard NDP options used in regular non-PvD-aware RA
+   messages.
 
-     0                   1                   2                   3
-     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |      134      |       0       |          Checksum             |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    | Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                         Reachable Time                        |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                          Retrans Timer                        |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
-    |  Type=PVD_CO  |       8       |      0        | 0 |     0     ~  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-    ~         |        18           | PVD_ID consuming 18 octets    |  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-    |       3       |       4       |      64       |1|1| Reserved1 |  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                         Valid Lifetime                        |  P
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  V
-    |                       Preferred Lifetime                      |  D
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                           Reserved2                           |  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-    |                      2001:db8:abad:cafe::                     ~  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-    |        5      |       1       |           Reserved            |  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-    |                            1337                               |  |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  +
-    |       3       |       4       | Prefix Length |1|1| Reserved1 |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                         Valid Lifetime                        |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                       Preferred Lifetime                      |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                           Reserved2                           |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                      2001:db8:cafe:babe::                     ~
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |        5      |      1        |           Reserved            |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                            1500                               |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   PVD_ID is mandatory option and MUST be present exactly once per
+   PVD_CO option.  If RA message contains multiple PVD_CO options, PvD
+   identifiers included in PVD_ID options MUST be unique.  The structure
+   of the PVD_ID option is taken from the [....].  Figure 2 shows the
+   structure of the PVD_ID option used in proposed MIF architecture
+   implementation.
 
-   which is a very simple example.
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |    Type=64    |   Length=5    |   id-type=4   | id-length=36  |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
+   ~                    PVD identity information                   ~
+   ~                       (UUID, 36 octets)                       ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
+                          Figure 2: PVD_ID option
+
+   In this experimental implementation, the type of the option is set to
+   64. [...] proposes several diferent data formats for PvD identifiers,
+   including UUID, UTF-8 string, OID, NAI Realm, FQDN, and ULA Prefix.
+   Here, UUID is chosen as the only supported format for PvD identifier
+   based on the unofficial consensus among members of the IETF MIF WG.
+   Since the length of the UUID is fixed to 36 octets, all fields in
+   PVD_ID option are of fixed length.  The option itself is always 40
+   octets long, therefore the Length field is set to 5, which is a
+   multiplier of 8 octets. id-type field is always set to 4, determining
+   UUID as the only supported PvD identifier data format.  Consequently,
+   id-length field is always set to 36, determining the length of UUID.
+
+   Other options nested within the PVD_CO option follow a standardized
+   structure defined in corresponding NDP documents.  Except the MTU
+   option, which MAY appear at most once per PVD_CO option, other
+   options MAY appear zero or more times per PVD_CO option.
+
+4.2.  Configuration file (radvd.conf) extension
+
+   The behavior of the Router Advertisement Daemon is configured using
+   textual configuration file, usually called radvd.conf.  Configuration
+   file enables system administrators to specify a wide range of
+   configuration parameters, including the frequency at which RA
+   messages with network configuration information will be multicasted
 
 
 
@@ -282,9 +282,42 @@ Gros, et al.              Expires May 26, 2016                  [Page 5]
 Internet-Draft          Configuring PvD using NDP          November 2015
 
 
-                     Figure 2: PvD-aware version of RA
+   to on-link clients, as well as what information will be included into
+   the RA messages.  Configuration parameters are grouped into
+   configuration blocks that can roughly be divided into two categories:
+   1) interface-level configuration directives that define whether or
+   not radvd will announce RA messages on a given interface, timing for
+   sending RA messages, client filters, etc., and 2) option-specific
+   configuration directives that define the content of particular NDP
+   options.  For the purpose of the MIF architecture implementation,
+   radvd configuration file is extended with new configuration directive
+   which enables definition of the content of the PVD_CO option.
 
-4.2.  Configuration file (radvd.conf) extension
+   Figure 3 shows a general structure of the radvd configuration file
+   extended with new configuration section for specifying PvD-related
+   network configuration information.
+
+     interface name {
+         list of interface specific options
+         list of prefix definitions
+         list of route definitions
+         list of RDNSS definitions
+         list of DNSSL definitions
+         list of LoWPANCo definitions
+         list of ABRO definitions
+       +----------------------------------------+
+       | list of PvD definitions                |
+       +----------------------------------------+
+     };
+
+    Figure 3: The structure of the radvd.conf extended with PvD-related
+                           configuration section
+
+   Newly introduced configuration section enables definition of network
+   configuration parameters for multiple provisioning domains.  One PvD
+   definition per provisioning domain MUST be specified in radvd.conf.
+   For each PvD definition, radvd generates a separate PVD_CO option in
+   RA message.
 
 5.  Acknowledgements
 
@@ -297,6 +330,14 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    All drafts are required to have an IANA considerations section (see
    the update of RFC 2434 [I-D.narten-iana-considerations-rfc2434bis]
    for a guide).  If the draft does not require IANA to do anything, the
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 6]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
    section contains an explicit statement that this is the case (as
    above).  If there are no requirements for IANA, the section will be
    removed during conversion into an RFC by the RFC Editor.
@@ -328,16 +369,6 @@ Internet-Draft          Configuring PvD using NDP          November 2015
               Architecture", RFC 7556, DOI 10.17487/RFC7556, June 2015,
               <http://www.rfc-editor.org/info/rfc7556>.
 
-
-
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 6]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
 8.2.  Informative References
 
    [I-D.ietf-mif-mpvd-dhcp-support]
@@ -350,6 +381,18 @@ Internet-Draft          Configuring PvD using NDP          November 2015
               for multiple provisioning domains in IPv6 Neighbor
               Discovery Protocol", draft-ietf-mif-mpvd-ndp-support-03
               (work in progress), February 2016.
+
+
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 7]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
 
    [I-D.narten-iana-considerations-rfc2434bis]
               Narten, T. and H. Alvestrand, "Guidelines for Writing an
@@ -386,14 +429,6 @@ Authors' Addresses
    Email: leonardo.jelenkovic@fer.hr
 
 
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 7]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
    Dejan Skvorc
    University of Zagreb
    Unska 3
@@ -401,41 +436,6 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    HR
 
    Email: dejan.skvorc@fer.hr
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
