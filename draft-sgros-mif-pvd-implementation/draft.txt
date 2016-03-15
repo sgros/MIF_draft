@@ -71,13 +71,14 @@ Table of Contents
    4.  Server component  . . . . . . . . . . . . . . . . . . . . . .   3
      4.1.  Router Advertisements (RA) message extension  . . . . . .   3
      4.2.  Configuration file (radvd.conf) extension . . . . . . . .   5
-   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   6
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   7
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+     4.3.  Example Usage . . . . . . . . . . . . . . . . . . . . . .   7
+   5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  10
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  11
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -103,7 +104,6 @@ Table of Contents
 2.3.  Test scenarios used
 
    Describe test scenarios used.
-
 
 
 
@@ -272,8 +272,8 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    The behavior of the Router Advertisement Daemon is configured using
    textual configuration file, usually called radvd.conf.  Configuration
    file enables system administrators to specify a wide range of
-   configuration parameters, including the frequency at which RA
-   messages with network configuration information will be multicasted
+   configuration parameters, that can roughly be divided into two
+   categories: 1) interface-level configuration directives that define
 
 
 
@@ -282,16 +282,13 @@ Gros, et al.              Expires May 26, 2016                  [Page 5]
 Internet-Draft          Configuring PvD using NDP          November 2015
 
 
-   to on-link clients, as well as what information will be included into
-   the RA messages.  Configuration parameters are grouped into
-   configuration blocks that can roughly be divided into two categories:
-   1) interface-level configuration directives that define whether or
-   not radvd will announce RA messages on a given interface, timing for
-   sending RA messages, client filters, etc., and 2) option-specific
-   configuration directives that define the content of particular NDP
-   options.  For the purpose of the MIF architecture implementation,
-   radvd configuration file is extended with new configuration directive
-   which enables definition of the content of the PVD_CO option.
+   whether or not radvd will announce RA messages on a given interface,
+   timing for sending RA messages, client filters, etc., and 2) option-
+   specific configuration directives that define the content of
+   particular NDP options.  For the purpose of the MIF architecture
+   implementation, radvd configuration file is extended with new
+   configuration directive which enables definition of the content of
+   the PVD_CO option.
 
    Figure 3 shows a general structure of the radvd configuration file
    extended with new configuration section for specifying PvD-related
@@ -319,6 +316,228 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    For each PvD definition, radvd generates a separate PVD_CO option in
    RA message.
 
+   Figure 4 shows the structure of the radvd.conf's configuration
+   directive for PvD definition.  PvD configuration block starts with
+   "pvd" keyword followed by UUID that represents the PvD identifier.
+   The body of the pvd block contains zero or more definitions for
+   prefix, route, RDNSS, and DNSSL.  Definitions used inside the pvd
+   block follow the same syntax as when they appear in the upper level
+   interface block.
+
+
+
+
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 6]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+     pvd UUID {
+         list of prefix definitions
+         list of route definitions
+         list of RDNSS definitions
+         list of DNSSL definitions
+     };
+
+    Figure 4: The structure of the PVD configuration section to use in
+                                radvd.conf
+
+4.3.  Example Usage
+
+   The following example shows a radvd configuration file that combines
+   two types of network configuration information: 1) those that are
+   announced to clients in traditional way, without specifying PvD
+   identity (implicit PvDs), and 2) those belonging to explicitly
+   identified PvDs (explicit PvDs).  In the example given, radvd
+   announces three sets of network configuration information, one
+   belonging to implicit, and two belonging to explicit PvD.  As
+   implicit PvD, it announces only the prefix information
+   (2001:db8:1111:2222::/64).  For the first explicit PvD, radvd
+   announces prefix information (2001:db8:aaaa:bbbb::/64) and the
+   address of the DNS server (2001:db8:aaaa:bbbb::1).  For the second
+   explicit PvD, only the prefix information (2001:db8:cccc:dddd::/64)
+   is announced to the clients.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 7]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+     interface eth0
+     {
+         AdvSendAdvert on;
+         IgnoreIfMissing on;
+         MinRtrAdvInterval 10;
+         MaxRtrAdvInterval 20;
+
+         prefix 2001:db8:1111:2222::/64
+         {
+             AdvOnLink on;
+             AdvAutonomous on;
+             AdvRouterAddr off;
+         };
+
+         pvd f5a7f97d-ba83-4fd8-a3e0-839b2c2446ca
+         {
+             prefix 2001:db8:aaaa:bbbb::/64
+             {
+                 AdvOnLink on;
+                 AdvAutonomous on;
+                 AdvRouterAddr off;
+             };
+
+             RDNSS 2001:db8:aaaa:bbbb::1
+             {
+                 AdvRDNSSLifetime 30;
+             };
+         };
+
+         pvd f5a7f97d-ba83-4fd8-a3e0-839b2c2446cb
+         {
+             prefix 2001:db8:cccc:dddd::/64
+             {
+                 AdvOnLink on;
+                 AdvAutonomous on;
+                 AdvRouterAddr off;
+             };
+         };
+     };
+
+        Figure 5: Example of radvd.conf with combined configuration
+                 parameters for implicit and explicit PvDs
+
+   Based on this configuration file, radvd generates the RA message
+   shown in Figure 6.
+
+     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 8]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |      134      |       0       |          Checksum             |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    | Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Reachable Time                        |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                          Retrans Timer                        |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ <+
+    |       3       |       4       |       64      |1|1| Reserved1 |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  I
+    |                         Valid Lifetime                        |  m
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  p
+    |                       Preferred Lifetime                      |  .
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                           Reserved2                           |  P
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  v
+    ~                      2001:db8:1111:2222::                     ~  D
+    ~                          (16 octets)                          ~  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ <+
+    |  63 (PVD_CO)  |      13       |0|      0      |       0       |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |            0 (padding to ensure 8 octets alignment)           |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |  64 (PVD_ID)  |       5       |        4      |      36       |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |                                                               |  |
+    ~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446ca              ~  E
+    ~                         (36 octets)                           ~  x
+    |                                                               |  p
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  l
+    |       3       |       4       |       64      |1|1| Reserved1 |  i
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  c
+    |                         Valid Lifetime                        |  i
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  t
+    |                       Preferred Lifetime                      |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  P
+    |                           Reserved2                           |  v
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  D
+    ~                      2001:db8:aaaa:bbbb::                     ~  1
+    ~                          (16 octets)                          ~  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |      25       |       3       |           Reserved            |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |                              30                               |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    ~                      2001:db8:aaaa:bbbb::1                    ~  |
+    ~                          (16 octets)                          ~  |
+
+
+
+Gros, et al.              Expires May 26, 2016                  [Page 9]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
+
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ <+
+    |  63 (PVD_CO)  |      10       |0|      0      |       0       |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |            0 (padding to ensure 8 octets alignment)           |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    |  64 (PVD_ID)  |       5       |        4      |      36       |  E
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  x
+    |                                                               |  p
+    ~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446cb              ~  l
+    ~                         (36 octets)                           ~  i
+    |                                                               |  c
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  i
+    |       3       |       4       |       64      |1|1| Reserved1 |  t
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                         Valid Lifetime                        |  P
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  v
+    |                       Preferred Lifetime                      |  D
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  2
+    |                           Reserved2                           |  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
+    ~                      2001:db8:cccc:dddd::                     ~  |
+    ~                          (16 octets)                          ~  |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ <+
+
+        Figure 6: Example of RA message with combined configuration
+                 parameters for implicit and explicit PvDs
+
+   Based on this RA message, PvD-aware clients can configure three
+   different set of network parameters on their network interfaces.
+   Non-PvD-aware clients will use prefix information from implicit PvD
+   only, skipping the content of two PVD_CO options.
+
 5.  Acknowledgements
 
    TBW.
@@ -330,17 +549,18 @@ Internet-Draft          Configuring PvD using NDP          November 2015
    All drafts are required to have an IANA considerations section (see
    the update of RFC 2434 [I-D.narten-iana-considerations-rfc2434bis]
    for a guide).  If the draft does not require IANA to do anything, the
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 6]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
    section contains an explicit statement that this is the case (as
    above).  If there are no requirements for IANA, the section will be
    removed during conversion into an RFC by the RFC Editor.
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                 [Page 10]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
 
 7.  Security Considerations
 
@@ -382,23 +602,21 @@ Internet-Draft          Configuring PvD using NDP          November 2015
               Discovery Protocol", draft-ietf-mif-mpvd-ndp-support-03
               (work in progress), February 2016.
 
-
-
-
-
-
-
-
-Gros, et al.              Expires May 26, 2016                  [Page 7]
-
-Internet-Draft          Configuring PvD using NDP          November 2015
-
-
    [I-D.narten-iana-considerations-rfc2434bis]
               Narten, T. and H. Alvestrand, "Guidelines for Writing an
               IANA Considerations Section in RFCs", draft-narten-iana-
               considerations-rfc2434bis-09 (work in progress), March
               2008.
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                 [Page 11]
+
+Internet-Draft          Configuring PvD using NDP          November 2015
+
 
    [RFC2629]  Rose, M., "Writing I-Ds and RFCs using XML", RFC 2629,
               DOI 10.17487/RFC2629, June 1999,
@@ -445,4 +663,10 @@ Authors' Addresses
 
 
 
-Gros, et al.              Expires May 26, 2016                  [Page 8]
+
+
+
+
+
+
+Gros, et al.              Expires May 26, 2016                 [Page 12]
