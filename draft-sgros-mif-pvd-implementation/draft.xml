@@ -12,6 +12,7 @@
 <!ENTITY I-D.narten-iana-considerations-rfc2434bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.narten-iana-considerations-rfc2434bis.xml">
 <!ENTITY I-D.ietf-mif-mpvd-dhcp-support SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mif-mpvd-dhcp-support.xml">
 <!ENTITY I-D.ietf-mif-mpvd-ndp-support SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mif-mpvd-ndp-support.xml">
+<!ENTITY I-D.ietf-mif-mpvd-id SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mif-mpvd-id.xml">
 
 <!ENTITY RFC6418 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6418.xml">
 <!ENTITY RFC6419 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6419.xml">
@@ -195,7 +196,7 @@
     <section title="Server component">
 
       <t>
-      Server side component of the MIF architecture implementation described in this document is Router Advertisements Daemon (radvd). radvd is used to announce PvD configuration data to the clients using NDP protocol. PvD-aware radvd extension alows clients to autoconfigure their network parameters related to multiple PvDs simultaneously. For the purpose of MIF architecture implementation, existing structure of Router Advertisements (RA) message is extended with new NDP option that encapsulates PvD-related network configuration information as suboptions. To configure what PvD-related network configuration information to include into RA messages, radvd configuration file is extended with new configuration block where PvD-related network configuration information are specified.
+      Server side component of the MIF architecture implementation described in this document is Router Advertisements Daemon (radvd). radvd is used to announce PvD-related network configuration data to the clients using NDP protocol. PvD-aware radvd extension alows clients to autoconfigure their network parameters related to multiple PvDs simultaneously. For the purpose of MIF architecture implementation, existing structure of Router Advertisements (RA) message is extended with new NDP option that encapsulates PvD-related network configuration information as suboptions. To configure what PvD-related network configuration information to include into RA messages, radvd configuration file is extended with new configuration block where PvD-related network configuration information are specified.
       </t>
 
       <t>
@@ -207,7 +208,7 @@
         PvD-aware version of radvd supports the inclusion of network parameters that belong to explicitly identified provisioning domains into the Router Advertisements (RA) messages. Explicitly identified provisioning domain is a set of consistent network configuration parameters identified by unique provisioning domain identifier (PvD ID).
         </t>
         <t>
-        To carry PvD-related network configuration information, the structure of the RA message is extended with new NDP option called Provisioning Domains Container option (PVD_CO), as described in [...]. PVD_CO is a container option, which means it encapsulates other NDP options. NDP options nested within the PVD_CO option describe particular PvD-related network configuration information. All information the belong to a single PvD which are part of a single network autoconfiguration procedure are nested within the same PVD_CO option. If a single RA message contains network configuration information from multiple sources, multiple PVD_CO options are present in such message. Therefore, RA message MAY contain zero or more PVD_CO options, one per PvD announced in RA message. <xref target="figure_pvdco_option" /> shows the structure of the PVD_CO option used in proposed MIF architecture implementation.
+        To carry PvD-related network configuration information, the structure of the RA message is extended with new NDP option called Provisioning Domains Container option (PVD_CO), as described in <xref target="I-D.ietf-mif-mpvd-ndp-support" />. PVD_CO is a container option, which means it encapsulates other NDP options. NDP options nested within the PVD_CO option describe particular PvD-related network configuration information. All information the belong to a single PvD which are part of a single network autoconfiguration procedure are nested within the same PVD_CO option. If a single RA message contains network configuration information from multiple sources, multiple PVD_CO options are present in such message. Therefore, RA message MAY contain zero or more PVD_CO options, one per PvD announced in RA message. <xref target="figure_pvdco_option" /> shows the structure of the PVD_CO option used in proposed MIF architecture implementation.
         </t>
 
         <t>        
@@ -235,7 +236,6 @@
         <t>The following NDP options are allowed to appear within the PVD_CO option:
           <list style="symbols">
             <t>Provisioning Domain Identifier option (PVD_ID)</t>
-            <t>MTU option</t>
             <t>Prefix Information option</t>
             <t>Route Information option</t>
             <t>RDNSS option</t>
@@ -248,7 +248,7 @@
         </t>
 
         <t>
-        PVD_ID is mandatory option and MUST be present exactly once per PVD_CO option. If RA message contains multiple PVD_CO options, PvD identifiers included in PVD_ID options MUST be unique. The structure of the PVD_ID option is taken from the [....]. <xref target="figure_pvdid_option" /> shows the structure of the PVD_ID option used in proposed MIF architecture implementation.
+        PVD_ID is mandatory option and MUST be present exactly once per PVD_CO option. If RA message contains multiple PVD_CO options, PvD identifiers included in PVD_ID options MUST be unique. General structure of the PVD_ID option is proposed in <xref target="I-D.ietf-mif-mpvd-id" />. For the pupose of this MIF architecture implementation, a slightly simplified structure is used, as shown in <xref target="figure_pvdid_option" />.
         </t>
 
         <t>        
@@ -269,17 +269,17 @@
         </t>
 
         <t>
-        In this experimental implementation, the type of the option is set to 64. [...] proposes several diferent data formats for PvD identifiers, including UUID, UTF-8 string, OID, NAI Realm, FQDN, and ULA Prefix. Here, UUID is chosen as the only supported format for PvD identifier based on the unofficial consensus among members of the IETF MIF WG. Since the length of the UUID is fixed to 36 octets, all fields in PVD_ID option are of fixed length. The option itself is always 40 octets long, therefore the Length field is set to 5, which is a multiplier of 8 octets. id-type field is always set to 4, determining UUID as the only supported PvD identifier data format. Consequently, id-length field is always set to 36, determining the length of UUID.        
+        In this experimental implementation, the type of the option is set to 64. <xref target="I-D.ietf-mif-mpvd-id" /> proposes several diferent data formats for PvD identifiers, including UUID, UTF-8 string, OID, NAI Realm, FQDN, and ULA Prefix. Here, UUID is chosen as the only supported format for PvD identifier. Since the length of the UUID is fixed to 36 octets, all fields in PVD_ID option are of fixed length. The option itself is always 40 octets long, therefore the Length field is set to 5, which is a multiplier of 8 octets. id-type field is always set to 4, determining UUID as the only supported PvD identifier data format. Consequently, id-length field is always set to 36, determining the length of UUID.        
         </t>
 
         <t>
-        Other options nested within the PVD_CO option follow a standardized structure defined in corresponding NDP documents. Except the MTU option, which MAY appear at most once per PVD_CO option, other options MAY appear zero or more times per PVD_CO option.
+        Other options nested within the PVD_CO option follow a standardized structure defined in corresponding NDP documents. Each of the nested options MAY appear zero or more times per PVD_CO option.
         </t>
       </section>
 
       <section title="Configuration file (radvd.conf) extension">
         <t>
-        The behavior of the Router Advertisement Daemon is configured using textual configuration file, usually called radvd.conf. Configuration file enables system administrators to specify a wide range of configuration parameters, that can roughly be divided into two categories: 1) interface-level configuration directives that define whether or not radvd will announce RA messages on a given interface, timing for sending RA messages, client filters, etc., and 2) option-specific configuration directives that define the content of particular NDP options. For the purpose of the MIF architecture implementation, radvd configuration file is extended with new configuration directive which enables definition of the content of the PVD_CO option.
+        The behavior of the Router Advertisement Daemon is configured using textual configuration file, usually called radvd.conf. Configuration file enables system administrators to specify a wide range of configuration parameters that can roughly be divided into two categories: 1) interface-level configuration directives that define whether or not radvd will announce RA messages on a given interface, timing for sending RA messages, client filters, etc., and 2) option-specific configuration directives that define the content of particular NDP options. For the purpose of the MIF architecture implementation, radvd configuration file is extended with new configuration directive which enables definition of the content of the PVD_CO option.
         </t>
         
         <t>
@@ -385,79 +385,79 @@
         <t>        
         <figure anchor="figure_ra_example" title="Example of RA message with combined configuration parameters for implicit and explicit PvDs">
           <artwork>
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |      134      |       0       |          Checksum             |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   | Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                         Reachable Time                        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                          Retrans Timer                        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;+
-   |       3       |       4       |       64      |1|1| Reserved1 |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  I
-   |                         Valid Lifetime                        |  m
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  p
-   |                       Preferred Lifetime                      |  .
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  
-   |                           Reserved2                           |  P
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  v
-   ~                      2001:db8:1111:2222::                     ~  D
-   ~                          (16 octets)                          ~  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;+
-   |  63 (PVD_CO)  |      13       |0|      0      |       0       |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |            0 (padding to ensure 8 octets alignment)           |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |  64 (PVD_ID)  |       5       |        4      |      36       |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |                                                               |  |
-   ~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446ca              ~  E
-   ~                         (36 octets)                           ~  x
-   |                                                               |  p
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  l
-   |       3       |       4       |       64      |1|1| Reserved1 |  i
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  c
-   |                         Valid Lifetime                        |  i
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  t
-   |                       Preferred Lifetime                      |  
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  P
-   |                           Reserved2                           |  v
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  D
-   ~                      2001:db8:aaaa:bbbb::                     ~  1
-   ~                          (16 octets)                          ~  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |      25       |       3       |           Reserved            |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |                              30                               |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   ~                      2001:db8:aaaa:bbbb::1                    ~  |
-   ~                          (16 octets)                          ~  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;+
-   |  63 (PVD_CO)  |      10       |0|      0      |       0       |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |            0 (padding to ensure 8 octets alignment)           |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   |  64 (PVD_ID)  |       5       |        4      |      36       |  E
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  x
-   |                                                               |  p
-   ~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446cb              ~  l
-   ~                         (36 octets)                           ~  i
-   |                                                               |  c
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  i
-   |       3       |       4       |       64      |1|1| Reserved1 |  t
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  
-   |                         Valid Lifetime                        |  P
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  v
-   |                       Preferred Lifetime                      |  D
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  2
-   |                           Reserved2                           |  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  |
-   ~                      2001:db8:cccc:dddd::                     ~  |
-   ~                          (16 octets)                          ~  |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;+
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|      134      |       0       |          Checksum             |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Cur Hop Limit |0|1|  Reserved |       Router Lifetime         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                         Reachable Time                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                          Retrans Timer                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;-+
+|       3       |       4       |       64      |1|1| Reserved1 |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   I
+|                         Valid Lifetime                        |   m
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   p
+|                       Preferred Lifetime                      |   l
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                           Reserved2                           |   P
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   v
+~                      2001:db8:1111:2222::                     ~   D
+~                          (16 octets)                          ~   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;-+
+|  63 (PVD_CO)  |      13       |0|      0      |       0       |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|            0 (padding to ensure 8 octets alignment)           |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|  64 (PVD_ID)  |       5       |        4      |      36       |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|                                                               |   |
+~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446ca              ~   E
+~                         (36 octets)                           ~   x
+|                                                               |   p
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   l
+|       3       |       4       |       64      |1|1| Reserved1 |   i
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   c
+|                         Valid Lifetime                        |   i
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   t
+|                       Preferred Lifetime                      |   
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   P
+|                           Reserved2                           |   v
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   D
+~                      2001:db8:aaaa:bbbb::                     ~   1
+~                          (16 octets)                          ~   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|      25       |       3       |           Reserved            |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|                              30                               |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+~                      2001:db8:aaaa:bbbb::1                    ~   |
+~                          (16 octets)                          ~   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;-+
+|  63 (PVD_CO)  |      10       |0|      0      |       0       |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|            0 (padding to ensure 8 octets alignment)           |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+|  64 (PVD_ID)  |       5       |        4      |      36       |   E
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   x
+|                                                               |   p
+~             f5a7f97d-ba83-4fd8-a3e0-839b2c2446cb              ~   l
+~                         (36 octets)                           ~   i
+|                                                               |   c
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   i
+|       3       |       4       |       64      |1|1| Reserved1 |   t
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                         Valid Lifetime                        |   P
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   v
+|                       Preferred Lifetime                      |   D
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   2
+|                           Reserved2                           |   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   |
+~                      2001:db8:cccc:dddd::                     ~   |
+~                          (16 octets)                          ~   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &lt;-+
           </artwork>
         </figure>
         </t>
@@ -535,6 +535,8 @@
       &I-D.ietf-mif-mpvd-dhcp-support;
 
       &I-D.ietf-mif-mpvd-ndp-support;
+      
+      &I-D.ietf-mif-mpvd-id;
 
       <!-- A reference written by an organization not a person. -->
 
