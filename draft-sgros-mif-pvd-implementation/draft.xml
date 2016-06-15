@@ -38,15 +38,15 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="info" docName="draft-sgros-an-implementation-of-PvD-support-in-Linux-00">
+<rfc category="info" docName="draft-sgros-pvd-support-in-linux-00">
   <!-- category values: std, bcp, info, exp, and historic
      ipr values: full3667, noModification3667, noDerivatives3667
      you can add the attributes updates="NNNN" and obsoletes="NNNN"
      they will automatically be output with "(if approved)" -->
 
   <front>
-    <title abbrev="An implementation of PvD support in Linux">
-		An implementation of PvD support in Linux</title>
+    <title abbrev="PvD support in Linux">
+		PvD support in Linux</title>
 
     <author fullname="Stjepan Gros"
             initials="S." surname="Gros"
@@ -96,7 +96,7 @@
       </address>
     </author>
 
-    <date month="March" year="2016" day="5" />
+    <date month="June" year="2016" day="15" />
 
     <!-- Meta-data Declarations -->
 

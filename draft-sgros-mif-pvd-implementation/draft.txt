@@ -5,12 +5,12 @@
 Internet Engineering Task Force                             S. Gros, Ed.
 Internet-Draft                                             L. Jelenkovic
 Intended status: Informational                                 D. Skvorc
-Expires: September 6, 2016                          University of Zagreb
-                                                           March 5, 2016
+Expires: December 17, 2016                          University of Zagreb
+                                                           June 15, 2016
 
 
-               An implementation of PvD support in Linux
-        draft-sgros-an-implementation-of-PvD-support-in-Linux-00
+                          PvD support in Linux
+                  draft-sgros-pvd-support-in-linux-00
 
 Abstract
 
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 6, 2016.
+   This Internet-Draft will expire on December 17, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 1]
+Gros, et al.            Expires December 17, 2016               [Page 1]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    the Trust Legal Provisions and are provided without warranty as
@@ -98,20 +98,20 @@ Table of Contents
      5.1.  Router Advertisements (RA) message extension  . . . . . .  34
      5.2.  Configuration file (radvd.conf) extension . . . . . . . .  36
      5.3.  Example Usage . . . . . . . . . . . . . . . . . . . . . .  37
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  40
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  40
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  40
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  40
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  41
-     8.3.  Implementation repositories . . . . . . . . . . . . . . .  41
-     8.4.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  42
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  42
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  41
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  41
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  41
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  41
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  42
+     8.3.  Implementation repositories . . . . . . . . . . . . . . .  42
+     8.4.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  43
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  43
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 2]
+Gros, et al.            Expires December 17, 2016               [Page 2]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
 1.  Introduction
@@ -165,9 +165,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 3]
+Gros, et al.            Expires December 17, 2016               [Page 3]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    is a big issue in that it is not possible to have the same PvD
@@ -221,9 +221,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 4]
+Gros, et al.            Expires December 17, 2016               [Page 4]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    +---------------------------------------------------+ +------------+
@@ -277,9 +277,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 5]
+Gros, et al.            Expires December 17, 2016               [Page 5]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    or more addresses derived from Prefix Information options if present
@@ -333,9 +333,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 6]
+Gros, et al.            Expires December 17, 2016               [Page 6]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
 3.2.  PvD Properties
@@ -389,9 +389,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 7]
+Gros, et al.            Expires December 17, 2016               [Page 7]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    From R1:
@@ -445,9 +445,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 8]
+Gros, et al.            Expires December 17, 2016               [Page 8]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    PvD-manager is a daemon for client host.  Currently, PvD-manager
@@ -501,9 +501,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016               [Page 9]
+Gros, et al.            Expires December 17, 2016               [Page 9]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    demonstrate API usage and PvD system possibilities are provided in
@@ -557,9 +557,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 10]
+Gros, et al.            Expires December 17, 2016              [Page 10]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    S2.  S1 is accessible by client only through implicit PvD provided by
@@ -613,9 +613,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 11]
+Gros, et al.            Expires December 17, 2016              [Page 11]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    required.  Some sort of permission system should also be applied to
@@ -669,9 +669,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 12]
+Gros, et al.            Expires December 17, 2016              [Page 12]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    different clients, the most prominent being network manager applet
@@ -725,9 +725,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 13]
+Gros, et al.            Expires December 17, 2016              [Page 13]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    Multiple IPv6 routers on a local network.
@@ -781,9 +781,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 14]
+Gros, et al.            Expires December 17, 2016              [Page 14]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
          Objects that allow management of networking devices.  By
@@ -837,9 +837,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 15]
+Gros, et al.            Expires December 17, 2016              [Page 15]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    objects.  After the initialization finishes, NM waits for external
@@ -893,9 +893,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 16]
+Gros, et al.            Expires December 17, 2016              [Page 16]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
          maintain, and terminate a connection.  There are many objects
@@ -949,9 +949,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 17]
+Gros, et al.            Expires December 17, 2016              [Page 17]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    2.  To move between network namespaces it is necessary to have
@@ -1005,9 +1005,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 18]
+Gros, et al.            Expires December 17, 2016              [Page 18]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
        be made available in any network namespace by creating as many
@@ -1061,9 +1061,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 19]
+Gros, et al.            Expires December 17, 2016              [Page 19]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    Distribution configuration files.  System dependent network
@@ -1117,9 +1117,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 20]
+Gros, et al.            Expires December 17, 2016              [Page 20]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
       NMSettingsConnection on a "wrong" network and so makes a user
@@ -1173,9 +1173,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 21]
+Gros, et al.            Expires December 17, 2016              [Page 21]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    o  The second problem is the question if there could exist two
@@ -1229,9 +1229,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 22]
+Gros, et al.            Expires December 17, 2016              [Page 22]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
 4.5.4.  PvD specific objects
@@ -1285,9 +1285,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 23]
+Gros, et al.            Expires December 17, 2016              [Page 23]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    to support PvD CO option [I-D.ietf-mif-mpvd-ndp-support].  The
@@ -1341,9 +1341,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 24]
+Gros, et al.            Expires December 17, 2016              [Page 24]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    Then, new class NMNetns was added that is used to represents a single
@@ -1397,9 +1397,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 25]
+Gros, et al.            Expires December 17, 2016              [Page 25]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    netns-name
@@ -1453,9 +1453,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 26]
+Gros, et al.            Expires December 17, 2016              [Page 26]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    When PvD container option is present within the RA message it is
@@ -1509,9 +1509,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 27]
+Gros, et al.            Expires December 17, 2016              [Page 27]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    object isn't good for two reasons.  First, it wasn't designed for
@@ -1565,9 +1565,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 28]
+Gros, et al.            Expires December 17, 2016              [Page 28]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    Issues related to the difference between PvD and PvD instance:
@@ -1621,9 +1621,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 29]
+Gros, et al.            Expires December 17, 2016              [Page 29]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    o  Routes specific to a gateway that sent RA.
@@ -1677,9 +1677,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 30]
+Gros, et al.            Expires December 17, 2016              [Page 30]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    o  Should applications know about relationship between PvDs and
@@ -1733,9 +1733,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 31]
+Gros, et al.            Expires December 17, 2016              [Page 31]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    Some questions are not specific for PvDs but are also valid for NDP
@@ -1758,10 +1758,10 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    are given in light of the implementation of PvDs described earlier.
 
    MPvD Architecture document distinguishes between implicit and
-   explicit PvDs.  Additional distinction is necessary between PvD and
-   PvD instance.
+   explicit PvDs.  Additional distinction is necessary between PvDs and
+   among PvD instances.
 
-   In section 2.2 the architecture document talks about treating
+   In Section 2.2 the architecture document talks about treating
    information received on different interfaces as being different PvDs.
    It might happen that different implicit PvDs are received on a single
    interface.  Thus, this should be better defined, i.e.  more formal
@@ -1773,10 +1773,11 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    Additionally, there are different bridging solutions on L2 that might
    solve this case much easier.
 
-   PvD identifiers introduced in section 2.4.  In this implementation
-   only UUID is used, and to present user with something meaningful
-   other mechanisms will be used.  For example, connection description
-   might be obtained via HTTP to appropriate URL, or query to DNS.
+   Different types of PvD identifiers are introduced in Section 2.4.  In
+   this implementation only UUID is used, and to present user with
+   something meaningful other mechanisms will be used.  For example,
+   connection description might be obtained via HTTP to appropriate URL,
+   or query to DNS.
 
    Section 2.5 talks about relation between IPv6 and IPv4 addresses.
    From the implementation perspective it seems easier to keep those
@@ -1784,15 +1785,17 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    those two are usually configured separately.  Thus, to keep things
    simple, it is best to keep them separated.
 
+
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 32]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
    Section 3.2 talks about security PvDs.  This is a very complex topic
    and it wasn't touched in this implementation.
-
-
-
-Gros, et al.            Expires September 6, 2016              [Page 32]
-
-Internet-Draft  An implementation of PvD support in Linux     March 2016
-
 
    In Section 4 three examples are given of multiple PvDs present.  Of
    those, only VPN case (example 4.2) was implemented fully due to being
@@ -1839,17 +1842,16 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    implementation, existing structure of Router Advertisements (RA)
    message is extended with new NDP option that encapsulates PvD-related
    network configuration information as suboptions.  To configure what
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 33]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
    PvD-related network configuration information to include into RA
    messages, radvd configuration file is extended with new configuration
-
-
-
-
-Gros, et al.            Expires September 6, 2016              [Page 33]
-
-Internet-Draft  An implementation of PvD support in Linux     March 2016
-
-
    block where PvD-related network configuration information are
    specified.
 
@@ -1884,6 +1886,26 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    announced in RA message.  Figure 4 shows the structure of the PVD_CO
    option used in proposed MIF architecture implementation.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 34]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1897,14 +1919,6 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
                           Figure 4: PVD_CO option
-
-
-
-
-Gros, et al.            Expires September 6, 2016              [Page 34]
-
-Internet-Draft  An implementation of PvD support in Linux     March 2016
-
 
    In this experimental implementation, the type of the option is set to
    63.  Option length is calculated depending on the length of the
@@ -1939,6 +1953,15 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    For the pupose of this MIF architecture implementation, a slightly
    simplified structure is used, as shown in Figure 5.
 
+
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 35]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1954,14 +1977,6 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
    In this experimental implementation, the type of the option is set to
    64.  [I-D.ietf-mif-mpvd-id] proposes several diferent data formats
-
-
-
-Gros, et al.            Expires September 6, 2016              [Page 35]
-
-Internet-Draft  An implementation of PvD support in Linux     March 2016
-
-
    for PvD identifiers, including UUID, UTF-8 string, OID, NAI Realm,
    FQDN, and ULA Prefix.  Here, UUID is chosen as the only supported
    format for PvD identifier.  Since the length of the UUID is fixed to
@@ -1995,6 +2010,14 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    extended with new configuration section for specifying PvD-related
    network configuration information.
 
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 36]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
      interface name {
          list of interface specific options
          list of prefix definitions
@@ -2010,13 +2033,6 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
     Figure 6: The structure of the radvd.conf extended with PvD-related
                            configuration section
-
-
-
-Gros, et al.            Expires September 6, 2016              [Page 36]
-
-Internet-Draft  An implementation of PvD support in Linux     March 2016
-
 
    Newly introduced configuration section enables definition of network
    configuration parameters for multiple provisioning domains.  One PvD
@@ -2050,6 +2066,14 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
    identity (implicit PvDs), and 2) those belonging to explicitly
    identified PvDs (explicit PvDs).  In the example given, radvd
    announces three sets of network configuration information, one
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 37]
+
+Internet-Draft            PvD support in Linux                 June 2016
+
+
    belonging to implicit, and two belonging to explicit PvD.  As
    implicit PvD, it announces only the prefix information
    (2001:db8:1111:2222::/64).  For the first explicit PvD, radvd
@@ -2069,9 +2093,41 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 37]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gros, et al.            Expires December 17, 2016              [Page 38]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
      interface eth0
@@ -2125,9 +2181,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 38]
+Gros, et al.            Expires December 17, 2016              [Page 39]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -2181,9 +2237,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 39]
+Gros, et al.            Expires December 17, 2016              [Page 40]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ <-+
@@ -2237,9 +2293,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 40]
+Gros, et al.            Expires December 17, 2016              [Page 41]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
@@ -2293,9 +2349,9 @@ Internet-Draft  An implementation of PvD support in Linux     March 2016
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 41]
+Gros, et al.            Expires December 17, 2016              [Page 42]
 
-Internet-Draft  An implementation of PvD support in Linux     March 2016
+Internet-Draft            PvD support in Linux                 June 2016
 
 
    [nmpvdsrc]
@@ -2349,4 +2405,4 @@ Authors' Addresses
 
 
 
-Gros, et al.            Expires September 6, 2016              [Page 42]
+Gros, et al.            Expires December 17, 2016              [Page 43]

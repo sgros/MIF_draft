@@ -5,7 +5,7 @@
 <head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 
-  <title>An implementation of PvD support in Linux</title>
+  <title>PvD support in Linux</title>
 
   <style type="text/css" title="Xml2Rfc (sans serif)">
   /*<![CDATA[*/
@@ -419,8 +419,8 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Gros, S., Ed., Jelenkovic, L., and D. Skvorc" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-sgros-an-implementation-of-PvD-support-in-Linux-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-3-5" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-sgros-pvd-support-in-linux-00" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-6-15" />
   <meta name="dct.abstract" content="The purpose of this draft is to document two implementations which implemented parts of PvD architecture document. One implementation was done from scratch (PvD-manager) while another is a part of an existing component (NetworkManager). The implementation of server component was also done but only in IPv6 router. DHCP was ignored due to IPR claims.  " />
   <meta name="description" content="The purpose of this draft is to document two implementations which implemented parts of PvD architecture document. One implementation was done from scratch (PvD-manager) while another is a part of an existing component (NetworkManager). The implementation of server component was also done but only in IPv6 router. DHCP was ignored due to IPR claims.  " />
 
@@ -444,20 +444,20 @@
   <td class="right">D. Skvorc</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 6, 2016</td>
+  <td class="left">Expires: December 17, 2016</td>
   <td class="right">University of Zagreb</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">March 5, 2016</td>
+  <td class="right">June 15, 2016</td>
 </tr>
 
     	
     </tbody>
   </table>
 
-  <p class="title">An implementation of PvD support in Linux<br />
-  <span class="filename">draft-sgros-an-implementation-of-PvD-support-in-Linux-00</span></p>
+  <p class="title">PvD support in Linux<br />
+  <span class="filename">draft-sgros-pvd-support-in-linux-00</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -469,7 +469,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 6, 2016.</p>
+<p>This Internet-Draft will expire on December 17, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -946,10 +946,10 @@ From R2:
 </ul>
 <h1 id="rfc.section.4.9"><a href="#rfc.section.4.9">4.9.</a> Comments on MPvD Architecture RFC document</h1>
 <p id="rfc.section.4.9.p.1">In this section few comments about <a href="#RFC7556">MPvD architecture RFC</a> <cite title="NONE">[RFC7556]</cite> are given in light of the implementation of PvDs described earlier.  </p>
-<p id="rfc.section.4.9.p.2">MPvD Architecture document distinguishes between implicit and explicit PvDs. Additional distinction is necessary between PvD and PvD instance.  </p>
-<p id="rfc.section.4.9.p.3">In section 2.2 the architecture document talks about treating information received on different interfaces as being different PvDs. It might happen that different implicit PvDs are received on a single interface. Thus, this should be better defined, i.e.  more formal process on how to distinguish PvDs and PvD instances.  </p>
+<p id="rfc.section.4.9.p.2">MPvD Architecture document distinguishes between implicit and explicit PvDs. Additional distinction is necessary between PvDs and among PvD instances.  </p>
+<p id="rfc.section.4.9.p.3">In Section 2.2 the architecture document talks about treating information received on different interfaces as being different PvDs. It might happen that different implicit PvDs are received on a single interface. Thus, this should be better defined, i.e.  more formal process on how to distinguish PvDs and PvD instances.  </p>
 <p id="rfc.section.4.9.p.4">Section 2.3 introduces possibility that one PvD is present on multiple interfaces. This is something that complicates implementation due to the way routing in the operating systems works. Additionally, there are different bridging solutions on L2 that might solve this case much easier.  </p>
-<p id="rfc.section.4.9.p.5">PvD identifiers introduced in section 2.4. In this implementation only UUID is used, and to present user with something meaningful other mechanisms will be used. For example, connection description might be obtained via HTTP to appropriate URL, or query to DNS.  </p>
+<p id="rfc.section.4.9.p.5">Different types of PvD identifiers are introduced in Section 2.4.  In this implementation only UUID is used, and to present user with something meaningful other mechanisms will be used. For example, connection description might be obtained via HTTP to appropriate URL, or query to DNS.  </p>
 <p id="rfc.section.4.9.p.6">Section 2.5 talks about relation between IPv6 and IPv4 addresses.  From the implementation perspective it seems easier to keep those separated and treat them as a separate PvDs. One reason is that those two are usually configured separately. Thus, to keep things simple, it is best to keep them separated.  </p>
 <p id="rfc.section.4.9.p.7">Section 3.2 talks about security PvDs. This is a very complex topic and it wasn't touched in this implementation.  </p>
 <p id="rfc.section.4.9.p.8">In Section 4 three examples are given of multiple PvDs present.  Of those, only VPN case (example 4.2) was implemented fully due to being the most straightforward.  </p>
